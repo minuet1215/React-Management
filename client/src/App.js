@@ -21,42 +21,23 @@ const styles = (theme) => ({
   },
 });
 
-const customers = [
-  {
-    id: 1,
-    image: "https://placeimg.com/64/64/1",
-    name: "Min-Woo",
-    birthday: "951215",
-    gender: "Male",
-    job: "students",
-  },
-  {
-    id: 2,
-    image: "https://placeimg.com/64/64/2",
-    name: "Ji-Won",
-    birthday: "970101",
-    gender: "Female",
-    job: "students",
-  },
-  {
-    id: 3,
-    image: "https://placeimg.com/64/64/3",
-    name: "Yu-Min",
-    birthday: "981234",
-    gender: "Female",
-    job: "office worker",
-  },
-  {
-    id: 4,
-    image: "https://placeimg.com/64/64/4",
-    name: "Kyeong-Hoon",
-    birthday: "961234",
-    gender: "Male",
-    job: "students",
-  },
-];
-
 class App extends Component {
+  state = {
+    customers: "",
+  };
+
+  componentDidMount() {
+    this.callApi()
+      .then((res) => this.setState({ customers: res }))
+      .catch((err) => console.log(err));
+  }
+
+  callApi = async () => {
+    const response = await fetch("/api/customers");
+    const body = await response.json();
+    return body;
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -73,19 +54,21 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map((c) => {
-              return (
-                <Customer
-                  key={c.id}
-                  id={c.id}
-                  image={c.image}
-                  name={c.name}
-                  birthday={c.birthday}
-                  gender={c.gender}
-                  job={c.job}
-                />
-              );
-            })}
+            {this.state.customers
+              ? this.state.customers.map((c) => {
+                  return (
+                    <Customer
+                      key={c.id}
+                      id={c.id}
+                      image={c.image}
+                      name={c.name}
+                      birthday={c.birthday}
+                      gender={c.gender}
+                      job={c.job}
+                    />
+                  );
+                })
+              : ""}
           </TableBody>
         </Table>
       </Paper>
